@@ -13,8 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { DIET_VALUES } from "@/server/db/schema";
-
+import { DIET_VALUES } from "@/lib/profile-constants"
 type Props = {
   defaultValues: Partial<UserProfileStep3Input>;
   onNext: (data: Partial<UserProfileStep3Input>) => void;

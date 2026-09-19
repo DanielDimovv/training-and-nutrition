@@ -3,9 +3,8 @@ import {
     integer,
     pgTable,
     text,
-    timestamp,
-    varchar,
-    vector
+    vector,
+    index
   } from "drizzle-orm/pg-core";
 import { documentsTable } from "./documents";
 
@@ -15,6 +14,9 @@ import { documentsTable } from "./documents";
     id: serial().primaryKey(),
     document_id:integer().notNull().references(()=> documentsTable.id, {onDelete:"cascade"}),
     chunk_index:integer().notNull(),
-    conntent:text().notNull(),
-    embeddinng: vector({dimensions:1536}).notNull()
-  })
+    content:text().notNull(),
+    embedding: vector({dimensions:1536}).notNull()
+  }, (t) => [
+    index("document_chunks_embedding_idx")
+      .using("hnsw", t.embedding.op("vector_cosine_ops")),
+  ])

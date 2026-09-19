@@ -1,7 +1,7 @@
 import { useQuery, useMutation, } from "@tanstack/react-query";
 import { authFetch } from "@/lib/authFetch";
-import { InsertUser } from "@/server/db/schema";
-import { LoginInput } from "@/types/api-types";
+
+import { LoginInput, RegisterInput } from "@/types/api-types";
 import { UserProfileInput } from "@/lib/utils";
 
 export function useGetUserBySessionId() {
@@ -22,7 +22,7 @@ export function useGetUserBySessionId() {
 
 export function useRegister() {
   return useMutation({
-    mutationFn: async (data: InsertUser) => {
+    mutationFn: async (data:RegisterInput ) => {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
