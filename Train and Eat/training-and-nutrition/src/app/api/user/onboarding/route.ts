@@ -2,14 +2,17 @@ import { z } from "zod";
 import { userProfileSchema } from "@/lib/utils";
 import { requireAuth } from "@/server/services/require-auth";
 import { upsertProfileData } from "@/server/services/users_profile_data";
-import { use } from "react";
+
 
 const onboardingDraftSchema = userProfileSchema.partial().strict();
 
 export async function PATCH(reqest: Request) {
   try {
+    const user = await requireAuth();
     const body = await reqest.json();
+    
     const parsed = onboardingDraftSchema.safeParse(body);
+    
 
     if (!parsed.success) {
       return Response.json(
@@ -22,9 +25,9 @@ export async function PATCH(reqest: Request) {
       return Response.json({ error: "EMPTY_PAYLOAD" }, { status: 400 });
     }
 
-    const user = await requireAuth();
+  
     const profile = await upsertProfileData({
-      user_id: user.id,
+      id: user.id,
       ...parsed.data,
     });
 
@@ -39,8 +42,10 @@ export async function PATCH(reqest: Request) {
 
 export async function POST(request: Request) {
   try {
+    const user = await requireAuth();
     const body = await request.json();
     const parsed = userProfileSchema.safeParse(body);
+   
     if (!parsed.success) {
       return Response.json(
         { error: "INVALID_INPUT", details: z.flattenError(parsed.error) },
@@ -50,9 +55,9 @@ export async function POST(request: Request) {
     if (Object.keys(parsed.data).length === 0) {
       return Response.json({ error: "EMPTY_PAYLOAD" }, { status: 400 });
     }
-    const user = await requireAuth();
+   
     const profile = await upsertProfileData({
-      user_id: user.id,
+      id: user.id,
       ...parsed.data,
     });
     return Response.json({ profile, completed: true }, { status: 200 });

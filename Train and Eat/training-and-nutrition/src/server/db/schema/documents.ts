@@ -1,10 +1,8 @@
 import {
     serial,
-    integer,
     pgTable,
     text,
     timestamp,
-    varchar,
   } from "drizzle-orm/pg-core";
 
 

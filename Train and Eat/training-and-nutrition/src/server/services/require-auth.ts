@@ -1,19 +1,18 @@
-import "server-only";
-import { cookies } from "next/headers";
-import { getUserBySessionId } from "@/server/services/auth";
+import "server-only"
+import { createClient } from "../../lib/supabase/server"
 
 export async function requireAuth() {
 
-  const cookieStore = await cookies();
-  const sessionId = cookieStore.get("session_id")?.value;
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
 
-  if (!sessionId) {
+  if (error || !data?.claims) {
     throw new Error("UNAUTHORIZED");
   }
-  
-  const user = await getUserBySessionId(sessionId);
-  if (!user) {
-    throw new Error("UNAUTHORIZED");
-  }
-  return user;
+
+  return {
+    id: data.claims.sub,
+    email: data.claims.email,
+  };
+    
 }
